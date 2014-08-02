@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ## Author: Brad Shepard
-## Version: June 1 2014
-## June 1 added gspread query for stations and logging
+## Version: Aug 2 2014
+## Initial commit to github
 
 #####Imports and Setup#####
 import time
