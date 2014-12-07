@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ## Author: Brad Shepard
-## Version: Aug 2 2014
-## Initial commit to github
+## Version: Dec 7 2014
+## Edited initial commit with more comments
 
 #####Imports and Setup#####
 import time
@@ -11,12 +11,12 @@ import os
 import subprocess
 import urllib2					  #for reading webform settings
 from datetime import datetime, timedelta          #for the time on the rpi end
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser	  #used to parse config file
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(16,GPIO.IN)
 import sys
-import gspread
+import gspread   				  #Google spreadsheet Python API by burnash
 
 #from twython import Twython
 #from apscheduler.scheduler import Scheduler       #this will let us check the calender on a regular interval; may not need; 3.0 is diff API
@@ -25,8 +25,6 @@ state = 0  #state 0 = idle; state 1=play
 button = True
 currentChannel=1
 
-
-#os.system("sudo mpd")
 os.system("sudo mpc clear")      #Clear mpc playlist
 
 
@@ -36,7 +34,7 @@ parser.read('sb.cfg')
 #************************************************************************************# 
 #****           Global variables: wakeup.cfg file                                ****#
 #************************************************************************************# 
-device = parser.get('user_settings', 'device')
+device = parser.get('user_settings', 'device')  #why use a device #?  Allows multiple fireside internet players to access a single Google spreadsheet.  The device # is the spreadsheet index key.
 email = parser.get('google_credentials', 'email')
 password = parser.get('google_credentials', 'password')
 #weather
@@ -58,12 +56,12 @@ print email
 print password
 gc = gspread.login(email,password)
 print "gspread success"
-#sheet=gc.open("Stonebridge").Stations
-sheet=gc.open("Stonebridge")
-mainsheet=sheet.worksheet("Stations")
-cell=mainsheet.find(device)
 
+sheet=gc.open("Fireside")  #open spreadsheet named 'Fireside
+mainsheet=sheet.worksheet("Stations") #open specific sheet named 'Stations'
+cell=mainsheet.find(device) #find the row referencing the player's device #
 
+#load all stations  (if you want more stations, add Station7, Station8, etc.)
 Station1=mainsheet.cell(cell.row, cell.col+1).value
 print Station1
 Station2=mainsheet.cell(cell.row, cell.col+2).value
@@ -90,7 +88,7 @@ def MainLoop_func(state,button,currentChannel,channelCount):
         if(button==False):
             buttonCount = buttonCount+1
 	    print buttonCount
-            if buttonCount > 10:
+            if buttonCount > 10:       #monitors time button is held...if more than 10 count, go to shutdown sequence
                 print "###########Shutdown################"
                 Shutdown(state)
                        
@@ -111,7 +109,7 @@ def MainLoop_func(state,button,currentChannel,channelCount):
         sleep(.1)
 
 #************************************************************************************# 
-#****           Function for startup (first button press)                           
+#****           Function for startup (first button press)   
 #************************************************************************************# 
 def Startup(state):
     Time_func()
@@ -220,23 +218,6 @@ def LoadURL_func():
     os.system("sudo mpc add "+Station5)
     os.system("sudo mpc add "+Station6)
 
-    #talk_news
-#   os.system("sudo mpc add http://crystalout.surfernetwork.com:8001/WFMN-FM_MP3")
-#   os.system("sudo mpc add http://64.78.234.173:8056")
-#   os.system("sudo mpc add http://freestreams.alldigital.net:8000/freestream301")
-#   os.system("sudo mpc add http://wolfstream.unr.edu:8000/")
-
-    #music
-#   os.system("sudo mpc add http://69.175.13.130:8400")  #doowop
-#   os.system("sudo mpc add http://vprclassical.streamguys.net/vprclassical64.mp3")
-#   os.system("sudo mpc add http://74.208.98.253:8246") #old time radio music
-
-    #old time
-#   os.system("sudo mpc add http://184.154.145.114:8097") #old radio shows
-
-    #book
-#   os.system("sudo mpc add http://74.208.98.253:8224") #radio books
-
     cmd = subprocess.Popen("sudo mpc playlist",shell=True, stdout=subprocess.PIPE)
     stations=cmd.stdout.readlines()
 
@@ -248,7 +229,7 @@ def LoadURL_func():
     os.system("sudo mpc volume 0")
 
     index = 1
-#i dont know if this is necessary
+#i dont know why/if this is necessary:  seems to help initialize the mpc playlist...
     while (index<channelCount):
         os.system("sudo mpc play " + str(index))
         index = index + 1
