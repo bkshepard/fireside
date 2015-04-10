@@ -5,7 +5,7 @@ created by: Brad Shepard  2014
 
 [Fireside Internet Radio](www.firesideinternetradio.com)
 
-Fireside Internet Radio is a project to provide personalized, streaming content to elderly patients or all people who may have difficulty using commercial media players.  Instructions are provided at www.firesideinternetradio.com on how to build a headless 'radio' receiver based on Raspberry Pi.  The python code in this repository can be loaded onto the PI's sd card. (Working on Instructables now)
+Fireside Internet Radio is a project to provide personalized, streaming content to elderly patients or all people who may have difficulty using commercial media players.  Instructions are provided at www.instructables.com/id/Fireside-Internet-Radio-Player-for-Elderly-Users-b/ for how to build a headless 'radio' receiver based on Raspberry Pi.  The python code in this repository can be loaded onto the PI's sd card.
 
 I hope you can use this code as a starting point to customize a content stream for your patient or loved one.  
 
